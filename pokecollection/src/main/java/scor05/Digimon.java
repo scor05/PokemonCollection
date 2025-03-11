@@ -6,7 +6,7 @@ package scor05;
 
 import java.util.List;
 
-public class Digimon {
+public class Digimon implements Comparable<Digimon> {
     public String name;
     public int number; // Numero del pokedex
     public String type1;
@@ -31,6 +31,9 @@ public class Digimon {
         this.legendary = legendary;
     }
 
+    public int compareTo(Digimon d){
+        return (this.type1.compareTo(d.type1) < 0) ? -1 : (this.type1.compareTo(d.type1) > 0) ? 1 : 0;
+    }
 
     public String getName() {
         return this.name;
