@@ -41,6 +41,7 @@ public class Driver {
                 case 1:
                     System.out.print("\nIngrese el nombre del Pokémon que desea agregar a su colección: ");
                     String name = sc.nextLine();
+                    name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase(); // Poner la primera letra en mayúscula y todas las demás en minúsculas
                     if (!pokemonDB.containsKey(name)){
                         throw new IllegalArgumentException("El Pokémon " + name + " no existe en la base de datos de los Pokémon.");
                     }
@@ -56,8 +57,9 @@ public class Driver {
                 case 2: 
                     System.out.print("\nIngrese el nombre del Pokémon que desea consultar: ");
                     String nombre = sc.nextLine();
+                    nombre = nombre.substring(0,1).toUpperCase() + nombre.substring(1).toLowerCase(); 
                     if (!pokemonDB.containsKey(nombre)){
-                        throw new IllegalArgumentException("El Pokémon " + nombre + " no existe en la base de datos de los Pokémon.");
+                        throw new IllegalArgumentException("El Pokémon '" + nombre + "' no existe en la base de datos de los Pokémon.");
                     }
                     Digimon pokemon = pokemonDB.get(nombre);
                     System.out.println("Nombre: " + pokemon.getName());
@@ -65,11 +67,11 @@ public class Driver {
                     System.out.println("Tipo primario: " + pokemon.getType1());
                     System.out.println("Tipo secundario: " + pokemon.getType2());
                     System.out.println("Clasificación: " + pokemon.getClassification());
-                    System.out.println("Altura: " + pokemon.getHeight());
-                    System.out.println("Peso: " + pokemon.getWeight());
+                    System.out.println("Altura (m): " + pokemon.getHeight());
+                    System.out.println("Peso (kg): " + pokemon.getWeight());
                     System.out.println("Habilidades: " + pokemon.getAbilities());
                     System.out.println("Generación: " + pokemon.getGeneration());
-                    System.out.println("Estado legendario: " + pokemon.isLegendary());
+                    System.out.println("Legendario: " + (pokemon.isLegendary() ? "Sí" : "No"));
                     break;
 
                 case 3:
@@ -78,9 +80,15 @@ public class Driver {
                     } else {
                         System.out.println("\nLos Pokémon actualmente en su colección son:");
                         for (Digimon d : userCollection.values()){
-                            System.out.println(d.getName());
+                            System.out.println(d.getName() + " (" + d.getType1() + ")");
                         }
                     }
+                    break;
+
+                case 6:
+                    System.out.println("Gracias por utilizar mi código :D");
+                    loop = false;
+                    break;
             }
         }while (loop);
     }
@@ -88,7 +96,7 @@ public class Driver {
     public static Map<String, Digimon> mapFactory() {
         int op = 0;
         while (op < 1 || op > 3){
-            System.out.print("Ingrese el número correspondiente a la implementación de Map desea utilizar: \n1. HashMap\n2. TreeMap\n3. LinkedHashMap \n\nR/ ");
+            System.out.print("\n\nIngrese el número correspondiente a la implementación de Map desea utilizar: \n1. HashMap\n2. TreeMap\n3. LinkedHashMap \nR/ ");
             op = sc.nextInt();
             sc.nextLine();
             switch(op){
@@ -105,16 +113,28 @@ public class Driver {
         Map<String, Digimon> pokemonDB = new HashMap<>();
         BufferedReader br = new BufferedReader(new FileReader("pokemon_data_pokeapi.csv"));
         String line;
+        
         while ((line = br.readLine()) != null) {
+            int index = 7; // index de la columna de habilidades inicial
             String[] split = line.split(",");
             List<String> abilities = new LinkedList<String>();
             if (split[7].charAt(0) == '"'){ // En el CSV, si hay más de una habilidad, empiezan siempre con "
-                String abilitiesText = split[7].substring(1, split[7].length()-1);
-                for (String ability : abilitiesText.split(",")) {
-                    abilities.add(ability);
+                for (int i = 1; i < split[index].length(); i++){
+                    if (split[index].charAt(i) == (char) '"'){
+                        abilities.add(split[index].substring(1, split[index].length()-1));
+                        index++;                        
+                        break;
+                    }
+                    else if (i == split[index].length() - 1){
+                        i = 1;
+                        abilities.add(split[index].substring(1, split[index].length()));
+                        index++;
+                        i++; // Salto para quitar el espacio siguiente de la coma
+                    }
                 }
             }else{
                 abilities.add(split[7]);
+                index++;
             }
             
             pokemonDB.put(split[0], new Digimon(
@@ -123,11 +143,11 @@ public class Driver {
                                 split[2], 
                                 split[3], 
                                 split[4], 
-                                Integer.parseInt(split[5]), 
-                                Integer.parseInt(split[6]), 
+                                Float.parseFloat(split[5]), 
+                                Float.parseFloat(split[6]), 
                                 abilities,
-                                Byte.parseByte(split[8]), 
-                                Boolean.parseBoolean(split[9])));
+                                Byte.parseByte(split[index]), 
+                                (split[index+1].equals("No")) ? true : false));
         }
         br.close();
         return pokemonDB;

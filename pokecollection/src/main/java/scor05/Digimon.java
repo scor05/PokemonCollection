@@ -12,13 +12,13 @@ public class Digimon implements Comparable<Digimon> {
     public String type1;
     public String type2;
     public String classification;
-    public int height; 
-    public int weight;
+    public float height; 
+    public float weight;
     public List<String> abilities;
     public byte generation;
     public boolean legendary;
 
-    public Digimon(String name, int number, String type1, String type2, String classification, int height, int weight, List<String> abilities, byte generation, boolean legendary) {
+    public Digimon(String name, int number, String type1, String type2, String classification, float height, float weight, List<String> abilities, byte generation, boolean legendary) {
         this.name = name;
         this.number = number;
         this.type1 = type1;
@@ -75,19 +75,19 @@ public class Digimon implements Comparable<Digimon> {
         this.classification = classification;
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return this.height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(float height) {
         this.height = height;
     }
 
-    public int getWeight() {
+    public float getWeight() {
         return this.weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(float weight) {
         this.weight = weight;
     }
 
