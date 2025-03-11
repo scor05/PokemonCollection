@@ -25,6 +25,7 @@ public class Driver {
                 System.out.println("Error al abrir el archivo de datos con la información de los Pokémon. Revise el directorio del .csv y su nombre.");
                 e.printStackTrace();
             }
+            System.out.println(pokemonDB.get("Mewtwo").isLegendary());
             System.out.println("-".repeat(50));
             System.out.println("\t\tColección de Pokémon");
             System.out.println("-".repeat(50));
@@ -176,7 +177,7 @@ public class Driver {
                                 Float.parseFloat(split[6]), 
                                 abilities,
                                 Byte.parseByte(split[index]), 
-                                (split[index+1].equals("No")) ? true : false));
+                                (split[index+1].equals("No")) ? false : true));
         }
         br.close();
         return pokemonDB;
