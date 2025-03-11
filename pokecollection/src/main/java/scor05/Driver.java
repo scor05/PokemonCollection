@@ -3,6 +3,7 @@ package scor05;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -15,7 +16,7 @@ public class Driver {
     public static Scanner sc = new Scanner(System.in);
     public static void main(String[] args) {
         boolean loop = true;
-        TreeMap<String, Digimon> userCollection = new TreeMap<>();
+        HashMap<String, Digimon> userCollection = new HashMap<>();
         do{
             Map<String, Digimon> pokemonDB = mapFactory();
             try{
@@ -30,7 +31,7 @@ public class Driver {
             System.out.println("Las funciones de este programa son:");
             System.out.println("1. Agregar un Pokémon a su colección");
             System.out.println("2. Mostrar datos de un Pokémon");
-            System.out.println("3. Mostrar todos los Pokémon con su tipo primario en su colección");
+            System.out.println("3. Mostrar todos los Pokémon en su colección");
             System.out.println("4. Mostrar todos Pokémon existentes");
             System.out.println("5. Mostrar Pokémon que tengan una habilidad específica");
             System.out.println("6. Salir");
@@ -47,7 +48,7 @@ public class Driver {
                     }
 
                     if (userCollection.containsKey(name)){
-                        System.out.println("El Pokémon " + name + " ya existe en su colección.");
+                        System.out.println("El Pokémon " + name + " ya está en su colección.");
                     }else {
                         userCollection.put(name, pokemonDB.get(name));
                         System.out.println("El Pokémon " + name + " ha sido agregado a su colección.");
@@ -79,9 +80,37 @@ public class Driver {
                         System.out.println("Su colección está vacía.");
                     } else {
                         System.out.println("\nLos Pokémon actualmente en su colección son:");
-                        for (Digimon d : userCollection.values()){
+                        List<Digimon> pokemonSorted = new LinkedList<>(userCollection.values());
+                        Collections.sort(pokemonSorted, new DigimonComparator()); // .sort() utiliza MergeSort.
+                        for (Digimon d : pokemonSorted){
                             System.out.println(d.getName() + " (" + d.getType1() + ")");
                         }
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("Todos los Pokémon existentes en la base de datos son:");
+                    List<Digimon> pokemonSorted = new LinkedList<>(pokemonDB.values());
+                    Collections.sort(pokemonSorted, new DigimonComparator());
+                    for (Digimon di : pokemonSorted){
+                        System.out.println(di.getName() + " (" + di.getType1() + ")");
+                    }
+                    break;
+
+                case 5:
+                    System.out.print("\nIngrese la habilidad que desea buscar: \nR/ ");
+                    String habilidad = sc.nextLine();
+                    habilidad = habilidad.substring(0,1).toUpperCase() + habilidad.substring(1).toLowerCase();
+                    System.out.println("Los Pokémon que tienen la habilidad '" + habilidad + "' son:");
+                    boolean found = false;
+                    for (Digimon d : pokemonDB.values()){
+                        if (d.getAbilities().contains(habilidad)){
+                            found = true;
+                            System.out.println(d.getName());
+                        }
+                    }
+                    if (!found){
+                        System.out.println("No se encontró ningún Pokémon que tenga la habilidad '" + habilidad + "'.");
                     }
                     break;
 
